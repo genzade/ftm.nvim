@@ -77,6 +77,14 @@ function M.close(opts)
   end
 end
 
+function M.close_all()
+  for _, term in pairs(terminals) do
+    if U.is_win_valid(term.win) then
+      term:close()
+    end
+  end
+end
+
 function M.destroy(opts)
   local name = opts and opts.name
   if name and terminals[name] then
