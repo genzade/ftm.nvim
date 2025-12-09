@@ -207,42 +207,6 @@ function Term:open()
 
   return self:store(win, buf):open_term()
 end
--- function Term:open()
---   -- Move to existing window if the window already exists
---   if U.is_win_valid(self.win) then
---     vim.api.nvim_set_current_win(self.win)
---     return self
---   end
-
---   -- If buffer is provided and valid, use it
---   if self.buf and U.is_buf_valid(self.buf) then
---     local win = self:create_win(self.buf)
---     self:store(win, self.buf):prompt()
---     return self
---   elseif self.buf then
---     vim.notify(
---       string.format('[FTM] Buffer with id %d does not exist!', self.buf),
---       vim.log.levels.ERROR,
---       { title = 'FTM' }
---     )
---     return self:open_term()
---   end
-
---   self:remember_cursor()
-
---   -- Create new buffer and window
---   local new_buf = self:create_buf()
---   local win = self:create_win(new_buf)
-
---   -- If toggling terminal, just prompt
---   if self.buf == new_buf then
---     self:store(win, new_buf):prompt()
---     return self
---   end
-
---   self:store(win, new_buf):open_term()
---   return self
--- end
 
 function Term:toggle()
   -- If window is stored and valid then it is already opened, then close it
