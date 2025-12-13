@@ -160,8 +160,8 @@ function Term:create_win(buf)
     height = dim.height,
     col = dim.col,
     row = dim.row,
-    title = ' FTM ', -- TODO: make this configurable, add cmd if present?
-    title_pos = 'left', -- TODO: make this configurable
+    title = string.format(' FTM: %s ', cfg.name),
+    title_pos = 'left',
   })
 
   vim.api.nvim_set_option_value('winhl', string.format('Normal:%s', cfg.hl), { win = win })
