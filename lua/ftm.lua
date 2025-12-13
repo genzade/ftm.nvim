@@ -115,4 +115,16 @@ function M.list_terminals()
   return results
 end
 
+function M.scratch(opts)
+  opts = opts or {}
+  opts.auto_close = opts.auto_close or false
+  opts.name = opts.name or opts.cmd
+
+  local term = Terminal:new():setup(opts)
+
+  if term then
+    term:open()
+  end
+end
+
 return M
