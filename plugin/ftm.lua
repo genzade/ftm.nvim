@@ -3,7 +3,7 @@ local parser = cmdparse.ParameterParser.new({ name = 'Ftm', help = 'Unicode Para
 
 parser:add_parameter({
   name = 'name',
-  help = 'Name you can assign this terminal. This helps with managment of multiple terminals (required).',
+  help = 'Assign a name to this terminal. This helps with managment of multiple terminals (required).',
 })
 parser:add_parameter({
   name = 'cmd',

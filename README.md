@@ -61,7 +61,3 @@ require("ftm").setup({
 Create terminals on the fly with the following command;
 
 - `:Ftm NAME CMD` – where `NAME` is whatever you desire and `CMD` is optional.
-
-## License
-
-[GPL-3.0 license](LICENSE)
