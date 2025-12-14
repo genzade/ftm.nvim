@@ -4,11 +4,13 @@ local U = require('ftm.utils')
 
 local has_setup = false
 local terminals = {}
+
+--- @class FTM
 local M = {}
 
--- M.config = config
-
-M.setup = function(opts)
+--- Setup FTM terminal manager.
+--- @param opts table|nil Optional setup options
+function M.setup()
   if has_setup then
     return
   end
@@ -29,6 +31,9 @@ M.setup = function(opts)
   has_setup = true
 end
 
+--- Get or create a terminal instance by options.
+--- @param opts table Options for terminal creation, must include 'name'
+--- @return Terminal|nil
 local function get_or_create(opts)
   opts = opts or {}
   local name = opts.name
@@ -48,12 +53,15 @@ local function get_or_create(opts)
   end
 
   -- Otherwise, create a new one, store it in the registry, and return it.
+  --- @type Terminal
   local new_term = Terminal:new():setup(opts)
   terminals[name] = new_term
 
   return new_term
 end
 
+--- Toggle a terminal open/closed.
+--- @param opts table Options for terminal (must include 'name')
 function M.toggle(opts)
   local term = get_or_create(opts)
   if term then
@@ -61,13 +69,17 @@ function M.toggle(opts)
   end
 end
 
-M.open = function(opts)
+--- Open a terminal.
+--- @param opts table Options for terminal (must include 'name')
+function M.open(opts)
   local term = get_or_create(opts)
   if term then
     term:open()
   end
 end
 
+--- Close a terminal.
+--- @param opts table Options for terminal (must include 'name')
 function M.close(opts)
   local name = opts and opts.name
   local force = opts and opts.force
@@ -77,6 +89,7 @@ function M.close(opts)
   end
 end
 
+--- Close all open terminals.
 function M.close_all()
   for _, term in pairs(terminals) do
     if U.is_win_valid(term.win) then
@@ -85,6 +98,8 @@ function M.close_all()
   end
 end
 
+--- Destroy (close and remove) a terminal.
+--- @param opts table Options for terminal (must include 'name')
 function M.destroy(opts)
   local name = opts and opts.name
   if name and terminals[name] then
@@ -93,6 +108,7 @@ function M.destroy(opts)
   end
 end
 
+--- Destroy (close and remove) all terminals.
 function M.destroy_all()
   for name, term in pairs(terminals) do
     term:close(true) -- Pass `true` to force cleanup
@@ -100,6 +116,8 @@ function M.destroy_all()
   end
 end
 
+--- List all managed terminals.
+--- @return table[] List of terminal info tables
 function M.list_terminals()
   local results = {}
   for name, term_instance in pairs(terminals) do
@@ -115,11 +133,14 @@ function M.list_terminals()
   return results
 end
 
+--- Open a scratch terminal (not managed in the registry).
+--- @param opts table Options for terminal
 function M.scratch(opts)
   opts = opts or {}
   opts.auto_close = opts.auto_close or false
   opts.name = opts.name or opts.cmd
 
+  --- @type Terminal
   local term = Terminal:new():setup(opts)
 
   if term then

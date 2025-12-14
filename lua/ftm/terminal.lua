@@ -1,15 +1,28 @@
 local U = require('ftm.utils')
-local Term = {}
 
----Term:new creates a new terminal instance
-function Term:new()
+--- @class Terminal
+--- @field win number|nil
+--- @field buf number|nil
+--- @field terminal number|nil
+--- @field config table
+--- @field last_win number|nil
+--- @field prev_win number|nil
+--- @field last_pos table|nil
+local Terminal = {}
+
+--- Creates a new terminal instance.
+--- @return Terminal
+function Terminal:new()
   return setmetatable(
     { win = nil, buf = nil, terminal = nil, config = U.defaults },
     { __index = self }
   )
 end
 
-function Term:setup(cfg)
+--- Setup terminal configuration.
+--- @param cfg table|nil
+--- @return Terminal
+function Terminal:setup(cfg)
   if not cfg then
     vim.notify(
       '[FTM] setup() is optional. Please remove it!',
@@ -24,14 +37,20 @@ function Term:setup(cfg)
   return self
 end
 
-function Term:store(win, buf)
+--- Store window and buffer references.
+--- @param win number
+--- @param buf number
+--- @return Terminal
+function Terminal:store(win, buf)
   self.win = win
   self.buf = buf
 
   return self
 end
 
-function Term:remember_cursor()
+--- Remember the current cursor position and window.
+--- @return Terminal
+function Terminal:remember_cursor()
   self.last_win = vim.api.nvim_get_current_win()
   self.prev_win = vim.fn.winnr('#')
   self.last_pos = vim.api.nvim_win_get_cursor(self.last_win)
@@ -39,7 +58,9 @@ function Term:remember_cursor()
   return self
 end
 
-function Term:restore_cursor()
+--- Restore the previously remembered cursor position and window.
+--- @return Terminal
+function Terminal:restore_cursor()
   if self.last_win and self.last_pos ~= nil then
     if self.prev_win > 0 then
       vim.cmd(('silent! %s wincmd w'):format(self.prev_win))
@@ -58,11 +79,14 @@ function Term:restore_cursor()
   return self
 end
 
-function Term:create_buf()
+--- Create a new buffer for the terminal.
+--- @return number buf
+function Terminal:create_buf()
   -- If previous buffer exists then return it
   local prev = self.buf
 
   if U.is_buf_valid(prev) then
+    print(vim.inspect(prev))
     return prev
   end
 
@@ -74,7 +98,9 @@ function Term:create_buf()
   return buf
 end
 
-function Term:resize()
+--- Resize the floating terminal window.
+--- @return Terminal
+function Terminal:resize()
   -- Only attempt to resize if the floating window is currently open and valid
   if U.is_win_valid(self.win) then
     local cfg = self.config
@@ -94,12 +120,15 @@ function Term:resize()
   return self
 end
 
-function Term:close(force)
+--- Close the terminal window and optionally force buffer cleanup.
+--- @param force boolean|nil
+--- @return Terminal
+function Terminal:close(force)
   if not U.is_win_valid(self.win) then
     return self
   end
 
-  vim.api.nvim_win_close(self.win, {})
+  vim.api.nvim_win_close(self.win, force or false)
 
   self.win = nil
 
@@ -119,7 +148,11 @@ function Term:close(force)
   return self
 end
 
-function Term:handle_exit(job_id, code, ...)
+--- Handle terminal job exit.
+--- @param job_id number
+--- @param code number
+--- @param ... any
+function Terminal:handle_exit(job_id, code, ...)
   if self.config.auto_close and code == 0 then
     self:close(true)
   end
@@ -128,12 +161,16 @@ function Term:handle_exit(job_id, code, ...)
   end
 end
 
-function Term:prompt()
+--- Enter insert mode in the terminal.
+--- @return Terminal
+function Terminal:prompt()
   vim.cmd.startinsert()
   return self
 end
 
-function Term:open_term()
+--- Open a terminal job in the buffer.
+--- @return Terminal
+function Terminal:open_term()
   -- NOTE: `termopen` fails if the current buffer is modified
   self.terminal = vim.fn.jobstart(U.is_cmd(self.config.cmd), {
     term = true,
@@ -149,7 +186,10 @@ function Term:open_term()
   return self:prompt()
 end
 
-function Term:create_win(buf)
+--- Create a floating window for the terminal.
+--- @param buf number
+--- @return number win
+function Terminal:create_win(buf)
   local cfg = self.config
   local dim = U.get_dimension(cfg.dimensions)
   local win = vim.api.nvim_open_win(buf, true, {
@@ -170,7 +210,9 @@ function Term:create_win(buf)
   return win
 end
 
-function Term:open()
+--- Open the terminal window and buffer.
+--- @return Terminal
+function Terminal:open()
   -- Move to existing window if the window already exists
   if U.is_win_valid(self.win) then
     return vim.api.nvim_set_current_win(self.win)
@@ -208,7 +250,9 @@ function Term:open()
   return self:store(win, buf):open_term()
 end
 
-function Term:toggle()
+--- Toggle the terminal window open/closed.
+--- @return Terminal
+function Terminal:toggle()
   -- If window is stored and valid then it is already opened, then close it
   if U.is_win_valid(self.win) then
     self:close()
@@ -219,4 +263,4 @@ function Term:toggle()
   return self
 end
 
-return Term
+return Terminal

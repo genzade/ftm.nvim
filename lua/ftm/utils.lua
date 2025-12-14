@@ -1,5 +1,9 @@
+--- @class FTMUtils
+--- @field defaults table
 local U = {}
 
+--- Default configuration options.
+--- @type table
 U.defaults = {
   ft = 'ftm',
   cmd = function()
@@ -21,6 +25,9 @@ U.defaults = {
   },
 }
 
+--- Calculate floating window dimensions and position.
+--- @param opts table
+--- @return table
 function U.get_dimension(opts)
   -- get lines and columns
   local cl = vim.o.columns
@@ -42,14 +49,23 @@ function U.get_dimension(opts)
   }
 end
 
+--- Check if a window is valid.
+--- @param win number|nil
+--- @return boolean
 function U.is_win_valid(win)
   return win and vim.api.nvim_win_is_valid(win)
 end
 
+--- Check if a buffer is valid and loaded.
+--- @param buf number|nil
+--- @return boolean
 function U.is_buf_valid(buf)
   return buf and vim.api.nvim_buf_is_loaded(buf)
 end
 
+--- Return the command string, evaluating if it's a function.
+--- @param cmd string|function
+--- @return string
 function U.is_cmd(cmd)
   return type(cmd) == 'function' and cmd() or cmd
 end
