@@ -101,7 +101,7 @@ local function list_terminals(opts)
 
             local picker = action_state.get_current_picker(prompt_bufnr)
             picker:refresh(
-              require('telescope.finders').new_table({
+              finders.new_table({
                 results = ftm_manager.list_terminals(),
                 entry_maker = entry_maker,
               }),
