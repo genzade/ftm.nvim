@@ -102,8 +102,9 @@ end
 --- @param opts table Options for terminal (must include 'name')
 function M.destroy(opts)
   local name = opts and opts.name
+  local force = opts and opts.force or false
   if name and terminals[name] then
-    terminals[name]:close() -- Pass `true` to force cleanup
+    terminals[name]:close(force) -- Pass `true` to force cleanup
     terminals[name] = nil -- Remove from the registry
   end
 end
