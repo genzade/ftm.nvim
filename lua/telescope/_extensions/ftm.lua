@@ -87,17 +87,26 @@ local function list_terminals(opts)
           end
         end)
 
-        map('i', '<c-d>', function()
+        map({ 'i', 'n' }, '<c-d>', function()
           local entry = action_state.get_selected_entry()
           if entry and entry.value and entry.value.instance then
-            -- entry.value.instance:close({ force = true }) -- Force cleanup
-            entry.value.instance:destroy({ name = entry.value.name })
+            local name = entry.value.name
+            -- local bufnr = entry.value.instance.buf
+            ftm_manager.destroy({ name = name, force = true })
             vim.notify(
-              string.format('[FTM] Destroyed terminal "%s".', entry.value.name),
+              string.format('[FTM] Destroyed terminal "%s".', name),
               vim.log.levels.INFO,
               { title = 'FTM' }
             )
-            -- actions.close(prompt_bufnr)
+
+            local picker = action_state.get_current_picker(prompt_bufnr)
+            picker:refresh(
+              require('telescope.finders').new_table({
+                results = ftm_manager.list_terminals(),
+                entry_maker = entry_maker,
+              }),
+              { reset_prompt = true }
+            )
           end
         end)
 
