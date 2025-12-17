@@ -3,30 +3,25 @@ local Terminal = require('ftm.terminal')
 local U = require('ftm.utils')
 
 local has_setup = false
-local terminals = {}
 
 --- @class FTM
 local M = {}
 
+M.terminals = {}
+
 --- Setup FTM terminal manager.
---- @param opts table|nil Optional setup options
-function M.setup()
+--- This function sets up the necessary autocommands to handle terminal resizing.
+function M.setup(opts)
+  opts = opts or {}
+  -- config = vim.tbl_deep_extend("force", default_config, opts)
+
+  print(vim.inspect(opts))
+
+  print('[FTM] Setup complete.')
+
   if has_setup then
     return
   end
-
-  local augroup = vim.api.nvim_create_augroup('FTM_ResizeAll', { clear = true })
-
-  vim.api.nvim_create_autocmd('VimResized', {
-    group = augroup,
-    desc = 'Resize all open FTM terminals',
-    callback = function()
-      -- Iterate through all terminals and resize them if they are open.
-      for _, term_instance in pairs(terminals) do
-        term_instance:resize()
-      end
-    end,
-  })
 
   has_setup = true
 end
@@ -48,14 +43,14 @@ local function get_or_create(opts)
   end
 
   -- If a terminal with this name already exists, return it.
-  if terminals[name] then
-    return terminals[name]
+  if M.terminals[name] then
+    return M.terminals[name]
   end
 
   -- Otherwise, create a new one, store it in the registry, and return it.
   --- @type Terminal
   local new_term = Terminal:new():setup(opts)
-  terminals[name] = new_term
+  M.terminals[name] = new_term
 
   return new_term
 end
@@ -84,14 +79,14 @@ function M.close(opts)
   local name = opts and opts.name
   local force = opts and opts.force
 
-  if name and terminals[name] then
-    terminals[name]:close(force)
+  if name and M.terminals[name] then
+    M.terminals[name]:close(force)
   end
 end
 
 --- Close all open terminals.
 function M.close_all()
-  for _, term in pairs(terminals) do
+  for _, term in pairs(M.terminals) do
     if U.is_win_valid(term.win) then
       term:close()
     end
@@ -103,17 +98,17 @@ end
 function M.destroy(opts)
   local name = opts and opts.name
   local force = opts and opts.force or false
-  if name and terminals[name] then
-    terminals[name]:close(force) -- Pass `true` to force cleanup
-    terminals[name] = nil -- Remove from the registry
+  if name and M.terminals[name] then
+    M.terminals[name]:close(force) -- Pass `true` to force cleanup
+    M.terminals[name] = nil -- Remove from the registry
   end
 end
 
 --- Destroy (close and remove) all terminals.
 function M.destroy_all()
-  for name, term in pairs(terminals) do
+  for name, term in pairs(M.terminals) do
     term:close(true) -- Pass `true` to force cleanup
-    terminals[name] = nil -- Remove from the registry
+    M.terminals[name] = nil -- Remove from the registry
   end
 end
 
@@ -121,7 +116,7 @@ end
 --- @return table[] List of terminal info tables
 function M.list_terminals()
   local results = {}
-  for name, term_instance in pairs(terminals) do
+  for name, term_instance in pairs(M.terminals) do
     table.insert(results, {
       name = name,
       -- The terminal is 'open' if its window is currently valid
