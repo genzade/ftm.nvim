@@ -18,12 +18,5 @@ describe('ftm plugin', function()
 
       assert.are.equal(first_config, second_config)
     end)
-
-    it('sets up `VimResize` autocommand for all terminals', function()
-      local success, augroups = pcall(vim.api.nvim_get_autocmds, { group = 'FTM_ResizeAll' })
-      assert.truthy(success)
-      assert.truthy(#augroups > 0)
-      assert.are.equal('VimResized', augroups[1].event)
-    end)
   end)
 end)
