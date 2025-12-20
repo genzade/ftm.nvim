@@ -23,7 +23,16 @@ U.defaults = {
     x = 0.5,
     y = 0.5,
   },
+  on_exit = nil,
 }
+
+--- Set default configuration options.
+--- @param config table
+U.set_defaults = function(config)
+  config = config or {}
+
+  U.defaults = vim.tbl_deep_extend('force', U.defaults, config)
+end
 
 --- Calculate floating window dimensions and position.
 --- @param opts table

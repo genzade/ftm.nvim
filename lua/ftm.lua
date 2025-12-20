@@ -13,15 +13,14 @@ M.terminals = {}
 --- This function sets up the necessary autocommands to handle terminal resizing.
 function M.setup(opts)
   opts = opts or {}
-  -- config = vim.tbl_deep_extend("force", default_config, opts)
-
-  print(vim.inspect(opts))
 
   print('[FTM] Setup complete.')
 
   if has_setup then
     return
   end
+
+  U.set_defaults(opts)
 
   has_setup = true
 end
