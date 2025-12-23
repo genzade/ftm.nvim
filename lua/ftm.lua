@@ -80,6 +80,10 @@ function M.close(opts)
 
   if name and M.terminals[name] then
     M.terminals[name]:close(force)
+
+    if force then
+      M.terminals[name] = nil -- Remove from the registry if forced
+    end
   end
 end
 
