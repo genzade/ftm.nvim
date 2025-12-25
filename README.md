@@ -12,6 +12,9 @@ A no nonsense floating terminal management plugin.
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Commands](#commands)
+  - [toggle](#toggle)
+  - [close](#close)
+  - [help](#help)
 - [Telescope](#telescope)
 - [Thanks](#thanks)
 
@@ -33,11 +36,7 @@ Use your favourite plugin manager to install `FTM`.
 ```lua
 {
   'genzade/ftm.nvim',
-  dependencies = {
-    'ColinKennedy/mega.cmdparse',
-    'ColinKennedy/mega.logging',
-    'nvim-telescope/telescope.nvim',
-  },
+  dependencies = { 'nvim-telescope/telescope.nvim' },
   opts = {
     -- add your options here (see configuration section below)
   }
@@ -143,11 +142,31 @@ vim.keymap.set({ 'n', 't' }, '<C-x>', function()
 end, { desc = 'Close any open terminal' })
 ```
 
+You can spin up a `scratch` terminal with a command that will close after a command is executed.
+
+```lua
+local ftm = require('ftm')
+
+ftm.scratch({ cmd = './some-command .' })
+```
+
+For example I use this with my test runner.
+
 ## Commands
 
 Create terminals on the fly with the following command;
 
-- `:Ftm NAME CMD` – where `NAME` is whatever you desire and `CMD` is optional.
+### toggle
+
+- `:Ftm toggle NAME CMD` – where `NAME` is whatever you desire and `CMD` is optional.
+
+### close
+
+- `:Ftm close NAME` - where `NAME` is the target terminal (completion for opened terminals are provided). Use `--force` or `-f` to close and destroy given terminal.
+
+### help
+
+- `:Ftm help` - help command is provided. You can also use the `--help` or `-h` flag for any command e.g. `:Ftm COMMAND --help`.
 
 ## Telescope
 
