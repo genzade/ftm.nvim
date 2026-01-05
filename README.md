@@ -48,11 +48,7 @@ Use your favourite plugin manager to install `FTM`.
 ```lua
 use {
   "genzade/ftm.nvim",
-  requires = {
-    'ColinKennedy/mega.cmdparse',
-    'ColinKennedy/mega.logging',
-    'nvim-telescope/telescope.nvim',
-  },
+  requires = { 'nvim-telescope/telescope.nvim' },
   config = function()
     require("ftm").setup(
       -- add your options here (see configuration section below)
@@ -184,7 +180,6 @@ vim.keymap.set(
   { desc = '[F]loating [T]erminal Picker' }
 )
 ```
-
 
 ## Thanks
 
