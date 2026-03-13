@@ -47,7 +47,7 @@ function U.get_dimension(opts)
   local height = math.ceil(ln * opts.height - 4)
 
   -- and its starting position
-  local col = math.ceil((cl - width) * opts.x)
+  local col = math.ceil((cl - width) * opts.x - 1)
   local row = math.ceil((ln - height) * opts.y - 1)
 
   return {
@@ -62,14 +62,14 @@ end
 --- @param win number|nil
 --- @return boolean
 function U.is_win_valid(win)
-  return win and vim.api.nvim_win_is_valid(win)
+  return win and vim.api.nvim_win_is_valid(win) or false
 end
 
 --- Check if a buffer is valid and loaded.
 --- @param buf number|nil
 --- @return boolean
 function U.is_buf_valid(buf)
-  return buf and vim.api.nvim_buf_is_loaded(buf)
+  return buf and vim.api.nvim_buf_is_loaded(buf) or false
 end
 
 --- Return the command string, evaluating if it's a function.

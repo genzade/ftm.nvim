@@ -14,8 +14,6 @@ M.terminals = {}
 function M.setup(opts)
   opts = opts or {}
 
-  print('[FTM] Setup complete.')
-
   if has_setup then
     return
   end
@@ -132,6 +130,8 @@ function M.list_terminals()
   return results
 end
 
+-- TODO: this needs to be toggleable, if you are running a test from a scratch terminal
+-- should be able to switch back to it
 --- Open a scratch terminal (not managed in the registry).
 --- @param opts table Options for terminal
 function M.scratch(opts)
